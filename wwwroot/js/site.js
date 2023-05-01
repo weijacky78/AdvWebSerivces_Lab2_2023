@@ -11,5 +11,6 @@ window.onload = async () => {
 
     for (const el of titles) {
         console.log(el);
+
     }
 }
