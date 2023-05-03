@@ -8,6 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers().AddXmlSerializerFormatters();
 // Add ability to output xml
 
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
+});
+
 // builder.Services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("todo"));
 
 builder.Services.AddDbContextFactory<TodoContext>(
@@ -27,7 +35,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
+app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 // the way we can use wwwroot files
 app.UseDefaultFiles();

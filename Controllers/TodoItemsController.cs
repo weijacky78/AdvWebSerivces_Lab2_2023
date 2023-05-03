@@ -50,7 +50,42 @@ namespace TodoApi.Controllers
 
             return todoItem;
         }
+        // HTTP patch [PATCH]/api/TodoItems/5/true
+        [HttpPatch("{id:int}")]
+        public async Task<ActionResult<TodoItem>> PatchTodoItem(uint id, TodoItem updatedData)
+        {
+            if (id != updatedData.TodoItemId)
+            {
+                return BadRequest();
+            }
 
+            _context.Entry(updatedData).State = EntityState.Modified;
+
+            await _context.SaveChangesAsync();
+            return updatedData;
+
+        }
+        // HTTP patch [PATCH]/api/TodoItems/5/true
+        [HttpPatch("{id:int}/{complete:bool}")]
+        public async Task<ActionResult<TodoItem>> CompleteTodoItem(uint id, bool complete)
+        {
+            var todoObj = await _context.TodoItems.FindAsync(id); // find the record with the given id
+
+            if (todoObj == null) // if does not exist, 404
+            {
+                return NotFound();
+            }
+            if (todoObj.IsComplete == complete) // if the record is already set to value of complete, don't do anything
+            {
+                return NoContent();
+            }
+            todoObj.IsComplete = complete; // set the value
+            _context.Update(todoObj); // update context
+            await _context.SaveChangesAsync(); // save to db
+
+            return todoObj;
+
+        }
         // PUT: api/TodoItems/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
